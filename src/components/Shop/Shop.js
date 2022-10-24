@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { addToDb, getStoredCart } from '../../utilities/fakedb';
+import { useLoaderData } from 'react-router-dom';
+
+import { addToDb, deleteShoppingCart, getStoredCart } from '../../utilities/fakedb';
 import Cart from '../Cart/Cart';
 import Product from '../Product/Product';
 import './Shop.css'
 const Shop = () => {
-    const [products, setProducts] = useState([]);
-    const [cart, setCart] = useState([]);
-    useEffect(()=>{
-         fetch('products.json')
-         .then(res => res.json())
-         .then(data => setProducts(data))
-    },[])
+    const products = useLoaderData();
+    const [tasks, setCart] = useState([]);
 
     useEffect(()=>{
         const storedCart = getStoredCart()
@@ -26,20 +23,24 @@ const Shop = () => {
         setCart(savedCart)
     }, [products])
 
-    const handleAddToCart = (selectedProduct) =>{
+    const handleClearCart = () =>{
+        setCart([]);
+        deleteShoppingCart();
+    }
+    const handleAddToCart = (exerciseTask) =>{
         let newCart = [];
-        const exists = cart.find(product => product.id === selectedProduct.id )
+        const exists = tasks.find(task => task.id === exerciseTask.id )
         if(!exists){
-            selectedProduct.quantity = 1;
-            newCart = [...cart, selectedProduct];
+            exerciseTask.quantity = 1;
+            newCart = [...tasks, exerciseTask];
         }
         else{
-            const rest = cart.filter(product => product.id !== selectedProduct.id)
-            selectedProduct.quantity = selectedProduct.quantity + 1;
+            const rest = tasks.filter(product => product.id !== exerciseTask.id)
+            exerciseTask.quantity = exerciseTask.quantity + 1;
             newCart = [...rest, exists]
         }
         setCart(newCart);
-        addToDb(selectedProduct.id)
+        addToDb(exerciseTask.id)
     }
     return (
         <div className='shop-container'>
@@ -54,7 +55,7 @@ const Shop = () => {
                 }
             </div>
             <div className="cart-container">
-                <Cart cart={cart}></Cart>
+                <Cart handleClearCart={handleClearCart} cart={tasks}></Cart>
                 
             </div>
         </div>
