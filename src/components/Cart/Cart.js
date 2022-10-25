@@ -1,6 +1,6 @@
 import React from 'react';
 import './Cart.css'
-const Cart = ({cart, handleClearCart}) => {
+const Cart = ({cart, handleClearCart, children}) => {
     let quantity = 0;
     let total = 0;
     let shipping = 0;
@@ -20,7 +20,8 @@ const Cart = ({cart, handleClearCart}) => {
             <p>Total shipping: ${shipping}</p>
             <p>Tax: ${tax}</p>
             <h4>Grand Total: ${grandTotal} </h4>
-            <button onClick={handleClearCart}>Clear Cart</button>
+            {/* <button onClick={handleClearCart}>Clear Cart</button> */}
+            {children}
         </div>
     );
 };
